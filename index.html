@@ -1,4 +1,16 @@
-HTML
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pen</title>
+  </head>
+  <body>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -378,11 +390,10 @@ HTML
     <!-- 1. 中央大頭貼與名字個人資料區 -->
     <div class="profile-section">
       <div class="avatar-wrapper">
-        <!-- 預設假圖片 (DiceBear Pixel Art API 生成之 Y2K 畫素頭像) -->
-        <img class="avatar-img" src=https://i.postimg.cc/vBWbB1pj/zhao-yi.jpgalt="User Avatar">
+        <img class="avatar-img" src="https://i.postimg.cc/vBWbB1pj/zhao-yi.jpg" alt="User Avatar">
       </div>
       <h1 class="user-name">PLAYER_1</h1>
-      <div class="user-status">PROGRESS: <span>2 / 16</span> UNLOCKED</div>
+      <div class="user-status">PROGRESS: <span>3 / 16</span> UNLOCKED</div>
     </div>
 
     <!-- 2. 下方 16 個關卡按鈕網格 -->
@@ -400,8 +411,13 @@ HTML
         <span class="quest-title">Week 2<br>今天吃甚麼?</span>
       </a>
 
-      <!-- 按鈕 3 ~ 16 (未解鎖) -->
-      <div class="quest-btn locked"><span class="quest-num">03</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <!-- 按鈕 3 (已解鎖) -->
+      <a href="w3/index.html" class="quest-btn unlocked">
+        <span class="quest-num">03</span>
+        <span class="quest-title">Week 3<br>迷因生產器</span>
+      </a>
+
+      <!-- 按鈕 4 ~ 16 (未解鎖) -->
       <div class="quest-btn locked"><span class="quest-num">04</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
       <div class="quest-btn locked"><span class="quest-num">05</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
       <div class="quest-btn locked"><span class="quest-num">06</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
