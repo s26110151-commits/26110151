@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>奶龍 (Milk Dragon) 迷因產生器</title>
+
+  <!-- 1. 引入 Google Fonts (圓潤可愛風格字體) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
+
+  <!-- 2. 引入 html2canvas 截圖下載程式庫 (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    /* ==========================================
+       奶龍主題 CSS 樣式設定
+       主色調：奶龍黃 #FFC83B, 蛋黃粉 #FFDB65, 軟萌黑 #2C2C2C
+       ========================================== */
+    :root {
+      --nd-yellow: #FFC83B;
+      --nd-light-yellow: #FFF8E7;
+      --nd-dark-yellow: #E6AA12;
+      --nd-belly: #FFE17D;
+      --nd-dark: #2A251D;
+      --nd-white: #FFFFFF;
+      --nd-shadow: 0 8px 0px var(--nd-dark);
+      --nd-border: 4px solid var(--nd-dark);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+    }
+
+    body {
+      background-color: var(--nd-light-yellow);
+      color: var(--nd-dark);
+      padding: 20px 10px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 頁頭標題區 */
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .title-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background-color: var(--nd-yellow);
+      padding: 12px 28px;
+      border-radius: 50px;
+      border: var(--nd-border);
+      box-shadow: var(--nd-shadow);
+    }
+
+    .title-wrapper h1 {
+      font-size: 1.8rem;
+      color: var(--nd-dark);
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: #665C4D;
+      font-weight: 700;
+    }
+
+    /* 主架構版面：響應式彈性佈局 (單欄/雙欄) */
+    .container {
+      width: 100%;
+      max-width: 1050px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    @media (min-width: 820px) {
+      .container {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+
+    /* 左側/上方：控制面板區 */
+    .control-panel {
+      flex: 1;
+      background: var(--nd-white);
+      border: var(--nd-border);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--nd-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 3px dashed var(--nd-yellow);
+      padding-bottom: 8px;
+    }
+
+    /* 預設奶龍模板區 */
+    .preset-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .preset-btn {
+      flex: 1;
+      background: var(--nd-light-yellow);
+      border: 3px solid var(--nd-dark);
+      padding: 8px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .preset-btn:hover {
+      background: var(--nd-yellow);
+      transform: translateY(-2px);
+    }
+
+    /* 上傳區塊 */
+    .file-input-wrapper {
+      position: relative;
+    }
+
+    .custom-file-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: var(--nd-yellow);
+      color: var(--nd-dark);
+      font-weight: 900;
+      padding: 12px;
+      border-radius: 16px;
+      border: var(--nd-border);
+      box-shadow: 0 4px 0 var(--nd-dark);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .custom-file-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--nd-dark);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    /* 輸入框樣式 */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--nd-dark);
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 3px solid var(--nd-dark);
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      background: #FFFDF7;
+    }
+
+    .text-input:focus {
+      border-color: var(--nd-dark-yellow);
+      background: #FFF;
+    }
+
+    /* 滑桿區域 */
+    .range-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--nd-light-yellow);
+      padding: 14px;
+      border-radius: 16px;
+      border: 2px solid #EAD8B1;
+    }
+
+    .range-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .range-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      accent-color: var(--nd-dark-yellow);
+      cursor: pointer;
+    }
+
+    /* 下載按鈕 (特製奶龍風格) */
+    .download-btn {
+      width: 100%;
+      background: #FF6B6B;
+      color: var(--nd-white);
+      font-size: 1.2rem;
+      font-weight: 900;
+      padding: 14px;
+      border: var(--nd-border);
+      border-radius: 20px;
+      box-shadow: 0 6px 0 var(--nd-dark);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 5px;
+    }
+
+    .download-btn:hover {
+      background: #FF5252;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 var(--nd-dark);
+    }
+
+    .download-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 var(--nd-dark);
+    }
+
+    /* 右側/下方：迷因預覽區 */
+    .preview-panel {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* 可畫截圖的容器 */
+    .meme-card {
+      width: 100%;
+      max-width: 500px;
+      aspect-ratio: 1 / 1;
+      position: relative;
+      background-color: var(--nd-white);
+      border: var(--nd-border);
+      border-radius: 24px;
+      box-shadow: var(--nd-shadow);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 迷因底圖 */
+    .meme-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* 文字覆蓋層 */
+    .meme-text {
+      position: absolute;
+      width: 90%;
+      text-align: center;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-weight: 900;
+      line-height: 1.2;
+      word-break: break-word;
+      user-select: none;
+      /* 多重描邊文字陰影，確保任何背景上皆清晰 */
+      text-shadow:
+        3px  3px 0 #000,
+       -3px  3px 0 #000,
+        3px -3px 0 #000,
+       -3px -3px 0 #000,
+        0px  3px 0 #000,
+        0px -3px 0 #000,
+        3px  0px 0 #000,
+       -3px  0px 0 #000,
+        4px  4px 8px rgba(0,0,0,0.5);
+    }
+
+    .top-text {
+      top: 8%;
+    }
+
+    .bottom-text {
+      bottom: 8%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 標題區 -->
+  <header>
+    <div class="title-wrapper">
+      <span>🐲</span>
+      <h1>奶龍迷因產生器</h1>
+    </div>
+    <div class="subtitle">咕嚕嚕~ 快來做一隻屬於你的呆萌奶龍梗圖！</div>
+  </header>
+
+  <!-- 主要內容區 -->
+  <div class="container">
+
+    <!-- 左側：控制面板 -->
+    <div class="control-panel">
+
+      <div class="section-title">
+        <span>🎨</span> Step 1. 選擇或上傳圖片
+      </div>
+
+      <!-- 奶龍內建模板 -->
+      <div class="preset-group">
+        <button class="preset-btn" onclick="loadPreset('hungry')">🍔 肚子餓餓</button>
+        <button class="preset-btn" onclick="loadPreset('shocked')">😲 嚇呆奶龍</button>
+        <button class="preset-btn" onclick="loadPreset('wag')">🐲 甩尾奶龍</button>
+      </div>
+
+      <!-- 本機上傳圖片 (避免 CORS 問題) -->
+      <div class="file-input-wrapper">
+        <label for="imageLoader" class="custom-file-btn">
+          📁 上傳電腦/手機裡的圖片
+        </label>
+        <input type="file" id="imageLoader" accept="image/*">
+      </div>
+
+      <div class="section-title">
+        <span>✏️</span> Step 2. 輸入迷因文字
+      </div>
+
+      <!-- 文字輸入框 -->
+      <div class="input-group">
+        <label for="topTextInput">上方文字：</label>
+        <input type="text" id="topTextInput" class="text-input" value="當你看到這行字" placeholder="輸入上方文字...">
+      </div>
+
+      <div class="input-group">
+        <label for="bottomTextInput">下方文字：</label>
+        <input type="text" id="bottomTextInput" class="text-input" value="代表該吃酸辣粉了" placeholder="輸入下方文字...">
+      </div>
+
+      <!-- 參數調節滑桿 -->
+      <div class="range-group">
+        <div class="range-item">
+          <div class="range-header">
+            <span>字體大小</span>
+            <span id="fontSizeVal">36px</span>
+          </div>
+          <input type="range" id="fontSizeSlider" min="20" max="60" value="36">
+        </div>
+
+        <div class="range-item">
+          <div class="range-header">
+            <span>上方文字高度</span>
+            <span id="topPosVal">8%</span>
+          </div>
+          <input type="range" id="topPosSlider" min="2" max="40" value="8">
+        </div>
+
+        <div class="range-item">
+          <div class="range-header">
+            <span>下方文字高度</span>
+            <span id="bottomPosVal">8%</span>
+          </div>
+          <input type="range" id="bottomPosSlider" min="2" max="40" value="8">
+        </div>
+      </div>
+
+      <!-- 下載按鈕 -->
+      <button class="download-btn" id="downloadBtn">
+        🚀 下載我的奶龍迷因！
+      </button>
+
+    </div>
+
+    <!-- 右側：迷因即時預覽區 -->
+    <div class="preview-panel">
+      <!-- 此區域將被 html2canvas 截圖匯出 -->
+      <div class="meme-card" id="memeCanvas">
+        <img id="memeImage" class="meme-bg" src="" alt="Meme 底圖">
+        <div id="topTextDisplay" class="meme-text top-text">當你看到這行字</div>
+        <div id="bottomTextDisplay" class="meme-text bottom-text">代表該吃酸辣粉了</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JavaScript 邏輯控制 -->
+  <script>
+    // 取得 HTML 元素 DOM
+    const memeImage = document.getElementById('memeImage');
+    const imageLoader = document.getElementById('imageLoader');
+    
+    const topTextInput = document.getElementById('topTextInput');
+    const bottomTextInput = document.getElementById('bottomTextInput');
+    const topTextDisplay = document.getElementById('topTextDisplay');
+    const bottomTextDisplay = document.getElementById('bottomTextDisplay');
+
+    const fontSizeSlider = document.getElementById('fontSizeSlider');
+    const topPosSlider = document.getElementById('topPosSlider');
+    const bottomPosSlider = document.getElementById('bottomPosSlider');
+
+    const fontSizeVal = document.getElementById('fontSizeVal');
+    const topPosVal = document.getElementById('topPosVal');
+    const bottomPosVal = document.getElementById('bottomPosVal');
+
+    const downloadBtn = document.getElementById('downloadBtn');
+    const memeCanvas = document.getElementById('memeCanvas');
+
+    // 內建奶龍 SVG 圖片模板 (使用 Data URL 避免任何跨域問題)
+    const presets = {
+      hungry: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500"><rect width="500" height="500" fill="%23FFC83B"/><circle cx="250" cy="270" r="160" fill="%23FFE17D"/><ellipse cx="250" cy="230" rx="140" ry="120" fill="%23FFC83B"/><path d="M 210,130 Q 220,90 235,120" stroke="%232A251D" stroke-width="8" fill="%23FFC83B" stroke-linecap="round"/><path d="M 290,130 Q 280,90 265,120" stroke="%232A251D" stroke-width="8" fill="%23FFC83B" stroke-linecap="round"/><circle cx="190" cy="210" r="14" fill="%232A251D"/><circle cx="310" cy="210" r="14" fill="%232A251D"/><circle cx="194" cy="206" r="4" fill="%23FFFFFF"/><circle cx="314" cy="206" r="4" fill="%23FFFFFF"/><ellipse cx="250" cy="260" rx="35" ry="25" fill="%232A251D"/><path d="M 230,250 Q 250,275 270,250" fill="%23FF6B6B"/><ellipse cx="150" cy="245" rx="18" ry="10" fill="%23FF8E8E" opacity="0.6"/><ellipse cx="350" cy="245" rx="18" ry="10" fill="%23FF8E8E" opacity="0.6"/></svg>`,
+      shocked: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500"><rect width="500" height="500" fill="%23FFDB65"/><circle cx="250" cy="280" r="170" fill="%23FFC83B"/><ellipse cx="250" cy="220" rx="130" ry="110" fill="%23FFC83B"/><circle cx="180" cy="190" r="22" fill="%232A251D"/><circle cx="320" cy="190" r="22" fill="%232A251D"/><circle cx="185" cy="185" r="8" fill="%23FFFFFF"/><circle cx="325" cy="185" r="8" fill="%23FFFFFF"/><circle cx="250" cy="260" r="30" fill="%232A251D"/><path d="M 210,120 Q 220,80 235,110" stroke="%232A251D" stroke-width="8" fill="%23FFC83B"/><path d="M 290,120 Q 280,80 265,110" stroke="%232A251D" stroke-width="8" fill="%23FFC83B"/></svg>`,
+      wag: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500"><rect width="500" height="500" fill="%23FFF8E7"/><path d="M 120,380 Q 50,300 130,220 Q 220,150 320,220 T 420,380 Z" fill="%23FFC83B" stroke="%232A251D" stroke-width="8"/><circle cx="280" cy="240" r="10" fill="%232A251D"/><circle cx="350" cy="240" r="10" fill="%232A251D"/><path d="M 300,270 Q 315,290 330,270" stroke="%232A251D" stroke-width="6" fill="none"/></svg>`
+    };
+
+    // 1. 初始化載入預設圖片
+    function loadPreset(key) {
+      memeImage.src = presets[key];
+    }
+    loadPreset('hungry'); // 預設使用「肚子餓餓」
+
+    // 2. 本機圖片上傳 (使用 FileReader 避免 CORS 錯誤)
+    imageLoader.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          memeImage.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // 3. 即時文字同步輸入
+    topTextInput.addEventListener('input', () => {
+      topTextDisplay.innerText = topTextInput.value;
+    });
+
+    bottomTextInput.addEventListener('input', () => {
+      bottomTextDisplay.innerText = bottomTextInput.value;
+    });
+
+    // 4. 滑桿控制文字大小與位置
+    fontSizeSlider.addEventListener('input', () => {
+      const val = fontSizeSlider.value + 'px';
+      topTextDisplay.style.fontSize = val;
+      bottomTextDisplay.style.fontSize = val;
+      fontSizeVal.innerText = val;
+    });
+
+    topPosSlider.addEventListener('input', () => {
+      const val = topPosSlider.value + '%';
+      topTextDisplay.style.top = val;
+      topPosVal.innerText = val;
+    });
+
+    bottomPosSlider.addEventListener('input', () => {
+      const val = bottomPosSlider.value + '%';
+      bottomTextDisplay.style.bottom = val;
+      bottomPosVal.innerText = val;
+    });
+
+    // 5. 一鍵截圖並下載 (html2canvas)
+    downloadBtn.addEventListener('click', () => {
+      // 顯示下載中提示文字
+      const originalBtnText = downloadBtn.innerText;
+      downloadBtn.innerText = '⏳ 正在產生迷因中...';
+      downloadBtn.style.opacity = '0.7';
+
+      html2canvas(memeCanvas, {
+        scale: 2, // 提高解析度 (2倍高清)
+        useCORS: true,
+        backgroundColor: null
+      }).then(canvas => {
+        // 建立隱藏的下載連結
+        const link = document.createElement('a');
+        link.download = 'my-meme.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        // 恢復按鈕狀態
+        downloadBtn.innerText = originalBtnText;
+        downloadBtn.style.opacity = '1';
+      }).catch(err => {
+        alert('下載失敗，請稍後再試！');
+        console.error(err);
+        downloadBtn.innerText = originalBtnText;
+        downloadBtn.style.opacity = '1';
+      });
+    });
+  </script>
+</body>
+</html>
