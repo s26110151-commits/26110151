@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pen</title>
+  </head>
+  <body>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Y2K PORTFOLIO HUB // 作品集闖關地圖</title>
+  <!-- Google Fonts: VT323 復古像素字體與 Press Start 2P -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================
+       Y2K 核心色彩與變數設定
+       ========================================== */
+    :root {
+      --bg-color: #0d0221;
+      --y2k-pink: #ff007f;
+      --y2k-cyan: #00f0ff;
+      --y2k-lime: #39ff14;
+      --y2k-yellow: #fff000;
+      --y2k-purple: #7b2cbf;
+      --y2k-dark-card: #180a29;
+      --metal-grad: linear-gradient(135deg, #e0e0e0 0%, #ffffff 40%, #8a8a8a 50%, #b0b0b0 100%);
+      --btn-grad: linear-gradient(180deg, #ff66cc 0%, #ff007f 100%);
+      --btn-cyan-grad: linear-gradient(180deg, #80ffff 0%, #00b3cc 100%);
+      --btn-lime-grad: linear-gradient(180deg, #b3ff80 0%, #28cc00 100%);
+      --locked-grad: linear-gradient(180deg, #4a4a5a 0%, #2a2a35 100%);
+      --border-outer: #ff007f;
+      --text-glow: 0 0 10px rgba(255, 0, 127, 0.8), 0 0 20px rgba(0, 240, 255, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: #fff;
+      font-family: 'VT323', 'Noto Sans TC', monospace, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 網格背景 + CRT 掃描線效果 */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 127, 0.08) 1px, transparent 1px);
+      background-size: 30px 30px;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 999;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    /* ==========================================
+       Y2K 視窗主容器
+       ========================================== */
+    .y2k-window {
+      width: 100%;
+      max-width: 900px;
+      background: var(--y2k-dark-card);
+      border: 4px solid var(--y2k-cyan);
+      box-shadow: 
+        0 0 15px var(--y2k-pink),
+        inset 0 0 15px rgba(0, 240, 255, 0.3),
+        8px 8px 0px #000;
+      border-radius: 8px;
+      padding: 6px;
+      position: relative;
+      animation: windowGlow 4s infinite alternate;
+    }
+
+    @keyframes windowGlow {
+      0% { box-shadow: 0 0 15px var(--y2k-pink), 8px 8px 0px #000; }
+      100% { box-shadow: 0 0 25px var(--y2k-cyan), 8px 8px 0px #000; }
+    }
+
+    /* 視窗標題列 */
+    .window-header {
+      background: linear-gradient(90deg, var(--y2k-pink), var(--y2k-purple), var(--y2k-cyan));
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 4px 4px 0 0;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: #fff;
+      text-shadow: 2px 2px #000;
+      margin-bottom: 20px;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .win-btn {
+      width: 16px;
+      height: 16px;
+      background: var(--metal-grad);
+      border: 1px solid #000;
+      box-shadow: inset 1px 1px #fff, inset -1px -1px #555;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* ==========================================
+       個人檔案資料區 (Profile Section)
+       ========================================== */
+    .profile-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 0 15px;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin-bottom: 15px;
+    }
+
+    /* 閃光邊框與旋轉金屬圈 */
+    .avatar-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -8px; left: -8px; right: -8px; bottom: -8px;
+      border: 3px dashed var(--y2k-yellow);
+      border-radius: 50%;
+      animation: rotateRing 12s linear infinite;
+    }
+
+    @keyframes rotateRing {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 0 15px var(--y2k-cyan);
+      background: #000;
+    }
+
+    .user-name {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1.5rem;
+      color: #fff;
+      text-shadow: var(--text-glow);
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+
+    .user-status {
+      display: inline-block;
+      background: rgba(0, 240, 255, 0.15);
+      border: 1px solid var(--y2k-cyan);
+      color: var(--y2k-lime);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .user-status span {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ==========================================
+       16個關卡選單網格 (Grid Layout)
+       ========================================== */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* 電腦版 4x4 */
+      gap: 15px;
+      padding: 10px;
+    }
+
+    /* 通用按鈕基底 */
+    .quest-btn {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 85px;
+      padding: 10px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-family: 'Noto Sans TC', sans-serif;
+      font-weight: 700;
+      text-align: center;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      outline: none;
+    }
+
+    /* 數字編號標籤 */
+    .quest-num {
+      position: absolute;
+      top: 4px;
+      left: 8px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.65rem;
+      opacity: 0.8;
+    }
+
+    /* --- 已解鎖按鈕 (Unlocked Buttons) --- */
+    .quest-btn.unlocked {
+      background: var(--btn-grad);
+      border: 2px solid #fff;
+      color: #fff;
+      box-shadow: 
+        inset 0 2px 0 rgba(255,255,255,0.6),
+        3px 3px 0px #000,
+        0 0 10px rgba(255, 0, 127, 0.5);
+      cursor: pointer;
+    }
+
+    /* Week 2 樣式 */
+    .quest-btn.unlocked:nth-child(2) {
+      background: var(--btn-cyan-grad);
+      box-shadow: 
+        inset 0 2px 0 rgba(255,255,255,0.6),
+        3px 3px 0px #000,
+        0 0 10px rgba(0, 240, 255, 0.5);
+      color: #002b36;
+    }
+
+    /* Week 4 樣式 */
+    .quest-btn.unlocked:nth-child(4) {
+      background: var(--btn-lime-grad);
+      box-shadow: 
+        inset 0 2px 0 rgba(255,255,255,0.6),
+        3px 3px 0px #000,
+        0 0 10px rgba(57, 255, 20, 0.5);
+      color: #082900;
+    }
+
+    .quest-btn.unlocked .quest-title {
+      font-size: 1rem;
+      line-height: 1.3;
+      margin-top: 8px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    }
+
+    .quest-btn.unlocked:nth-child(2) .quest-title,
+    .quest-btn.unlocked:nth-child(4) .quest-title {
+      text-shadow: none;
+    }
+
+    /* ✨ 酷炫 Hover 動畫效果 ✨ */
+    .quest-btn.unlocked:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 
+        0 0 20px var(--y2k-yellow),
+        5px 5px 0px #000;
+      border-color: var(--y2k-yellow);
+      animation: glitch 0.3s infinite alternate;
+    }
+
+    .quest-btn.unlocked:active {
+      transform: translateY(2px) scale(0.98);
+      box-shadow: 1px 1px 0px #000;
+    }
+
+    /* Glitch 震動微效果 */
+    @keyframes glitch {
+      0% { transform: translateY(-4px) scale(1.05) skew(0deg); }
+      50% { transform: translateY(-4px) scale(1.05) skew(1deg); }
+      100% { transform: translateY(-4px) scale(1.05) skew(-1deg); }
+    }
+
+    /* --- 未解鎖按鈕 (Locked Buttons) --- */
+    .quest-btn.locked {
+      background: var(--locked-grad);
+      border: 2px solid #3a3a4c;
+      color: #71718a;
+      cursor: not-allowed;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+      pointer-events: none;
+    }
+
+    .quest-btn.locked .lock-icon {
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+      filter: grayscale(100%);
+      opacity: 0.6;
+    }
+
+    .quest-btn.locked .quest-title {
+      font-size: 0.85rem;
+      font-family: 'VT323', monospace;
+      letter-spacing: 1px;
+    }
+
+    /* ==========================================
+       響應式適配 (RWD 調整)
+       ========================================== */
+    @media (max-width: 768px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .user-name {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      .window-header {
+        font-size: 9px;
+      }
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .quest-btn {
+        min-height: 75px;
+        padding: 6px;
+      }
+      .quest-btn.unlocked .quest-title {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Y2K 主視窗 -->
+  <div class="y2k-window">
+    
+    <!-- Win98 復古標題列 -->
+    <div class="window-header">
+      <span>C:\QUEST_LOG\PORTFOLIO.EXE</span>
+      <div class="window-controls">
+        <div class="win-btn">_</div>
+        <div class="win-btn">□</div>
+        <div class="win-btn">X</div>
+      </div>
+    </div>
+
+    <!-- 1. 中央大頭貼與名字個人資料區 -->
+    <div class="profile-section">
+      <div class="avatar-wrapper">
+        <img class="avatar-img" src="https://i.postimg.cc/vBWbB1pj/zhao-yi.jpg" alt="User Avatar">
+      </div>
+      <h1 class="user-name">PLAYER_1</h1>
+      <div class="user-status">PROGRESS: <span>4 / 16</span> UNLOCKED</div>
+    </div>
+
+    <!-- 2. 下方 16 個關卡按鈕網格 -->
+    <div class="menu-grid">
+      
+      <!-- 按鈕 1 (已解鎖) -->
+      <a href="w1/index.html" class="quest-btn unlocked">
+        <span class="quest-num">01</span>
+        <span class="quest-title">Week 1<br>數位名片</span>
+      </a>
+
+      <!-- 按鈕 2 (已解鎖) -->
+      <a href="w2/index.html" class="quest-btn unlocked">
+        <span class="quest-num">02</span>
+        <span class="quest-title">Week 2<br>今天吃甚麼?</span>
+      </a>
+
+      <!-- 按鈕 3 (已解鎖) -->
+      <a href="w3/index.html" class="quest-btn unlocked">
+        <span class="quest-num">03</span>
+        <span class="quest-title">Week 3<br>迷因生產器</span>
+      </a>
+
+      <!-- 按鈕 4 (已解鎖 - 動態留言板) -->
+      <a href="w4/index.html" class="quest-btn unlocked">
+        <span class="quest-num">04</span>
+        <span class="quest-title">Week 4<br>動態留言板</span>
+      </a>
+
+      <!-- 按鈕 5 ~ 16 (未解鎖) -->
+      <div class="quest-btn locked"><span class="quest-num">05</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">06</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">07</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">08</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">09</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">10</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">11</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">12</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">13</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">14</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">15</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">16</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>朋友對我的動態留言板 // CYBER-BOARD</title>
+
+  <!-- 引入 Google 復古/科技感字體 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. 視覺色彩與變數設定 (視覺風格參數 - 可在此修改顏色)
+       ========================================================================== */
+    :root {
+      /* 背景色系 */
+      --bg-color: #0b0c10;           /* 深邃夜空黑背景 */
+      --card-bg: #12141d;            /* 卡片底色 */
+      
+      /* 霓虹主題色彩 */
+      --primary-cyan: #00f0ff;       /* 科技青藍色 (主發光色) */
+      --primary-pink: #ff007f;       /* Y2K 霓虹粉紅 (次發光色) */
+      --neon-yellow: #ffe600;        /* 強調黃色 */
+      
+      /* 文字顏色 */
+      --text-main: #f0f6fc;          /* 主要文字白 */
+      --text-sub: #8b949e;           /* 次要時間文字灰 */
+      
+      /* 動畫參數設定 */
+      --carousel-speed: 3000ms;     /* 輪播間隔時間：3000ms = 3 秒 */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      padding: 30px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 背景網格與 CRT 科技掃描線特效 */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: 
+        linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 127, 0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* 頁面大標題區 */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      color: #fff;
+      text-transform: uppercase;
+      text-shadow: 
+        0 0 10px var(--primary-cyan),
+        0 0 20px var(--primary-pink);
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-sub);
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
+
+    /* Container 容器 */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ==========================================================================
+       2. 酷炫 Loading 讀取動畫
+       ========================================================================== */
+    #loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    .cyber-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(0, 240, 255, 0.1);
+      border-left-color: var(--primary-cyan);
+      border-right-color: var(--primary-pink);
+      border-radius: 50%;
+      animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+      box-shadow: 0 0 15px var(--primary-cyan);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    .loading-text {
+      margin-top: 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      color: var(--primary-cyan);
+      letter-spacing: 3px;
+      text-shadow: 0 0 10px var(--primary-cyan);
+      animation: blink 1.2s infinite alternate;
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    /* ==========================================================================
+       3. 瀑布流排版 (Masonry Layout via CSS Column)
+       ========================================================================== */
+    .masonry-wall {
+      column-count: 3;             /* 電腦版預設 3 欄 */
+      column-gap: 20px;
+      width: 100%;
+      display: none;               /* 載入完成前先隱藏 */
+    }
+
+    /* RWD 響應式調整欄數 */
+    @media (max-width: 900px) {
+      .masonry-wall { column-count: 2; } /* 平板 2 欄 */
+    }
+    @media (max-width: 600px) {
+      .masonry-wall { column-count: 1; } /* 手機 1 欄 */
+    }
+
+    /* ==========================================================================
+       4. 留言卡片樣式與輪播 Spotlight 特效
+       ========================================================================== */
+    .msg-card {
+      break-inside: avoid;         /* 防止卡片跨欄截斷 */
+      margin-bottom: 20px;
+      background: var(--card-bg);
+      border: 2px solid rgba(0, 240, 255, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      /* 轉場動畫平滑效果 (可修改秒數調整流暢度) */
+      transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .msg-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+    }
+
+    .msg-author {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--primary-cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .msg-author::before {
+      content: "✦";
+      color: var(--primary-pink);
+    }
+
+    .msg-time {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      font-family: 'Orbitron', monospace;
+    }
+
+    .msg-content {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-main);
+      word-break: break-word;
+      white-space: pre-wrap;      /* 保留原始留言的換行 */
+    }
+
+    /* --------------------------------------------------------------------------
+       ✨ 輪播狀態：被焦點選中 (Highlight) 的卡片特效
+       -------------------------------------------------------------------------- */
+    .msg-card.highlight {
+      transform: scale(1.06) z-index(10);
+      border-color: var(--primary-pink);
+      /* 強烈的雙色霓虹發光邊框 */
+      box-shadow: 
+        0 0 20px var(--primary-pink),
+        inset 0 0 15px rgba(255, 0, 127, 0.3),
+        0 0 40px rgba(0, 240, 255, 0.4);
+      z-index: 10;
+      opacity: 1 !important;
+      filter: blur(0px) !important;
+    }
+
+    /* --------------------------------------------------------------------------
+       陰暗狀態：未被選中的卡片 (Dimmed) 稍微變暗變模糊
+       -------------------------------------------------------------------------- */
+    .masonry-wall.has-highlight .msg-card:not(.highlight) {
+      opacity: 0.35;                 /* 未選中調暗至 35% 透明度 (可修改) */
+      filter: blur(1.5px);           /* 未選中微模糊 1.5px (可修改) */
+      transform: scale(0.98);        /* 稍微縮小 */
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>MESSAGES // 動態留言板</h1>
+      <p>朋友留給我的秘密與悄悄話</p>
+    </header>
+
+    <!-- 讀取中動畫 -->
+    <div id="loading">
+      <div class="cyber-spinner"></div>
+      <div class="loading-text">CONNECTING & READING DATA...</div>
+    </div>
+
+    <!-- 瀑布流留言牆容器 -->
+    <div id="wall" class="masonry-wall"></div>
+  </div>
+
+  <script>
+    // ==========================================================================
+    // 參數配置 (Configuration)
+    // ==========================================================================
+    // Google 試算表 CSV 網址
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSkxSuTAwL7ygcZ2mUENctw6xSnX7taF4c0CVAQhYzL1a14m-KeQZOSDJueIAJBMKKpioWrbKHumpzz/pub?output=csv';
+    
+    // 輪播變換間隔時間 (單位: 毫秒)
+    const CAROUSEL_INTERVAL = 3000; // 3000ms = 3 秒 (可在這裡修改輪播速度)
+
+    // 全局變數
+    let messageCards = [];          // 存放所有生成的 DOM 卡片
+    let currentIndex = 0;           // 目前高亮的卡片索引
+    let carouselTimer = null;       // 計時器物件
+
+    // ==========================================================================
+    // 1. 初始化與讀取 Google 試算表 CSV 資料
+    // ==========================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchMessages();
+    });
+
+    async function fetchMessages() {
+      try {
+        const response = await fetch(CSV_URL);
+        if (!response.ok) throw new Error('網路回應錯誤');
+        
+        const csvText = await response.text();
+        const parsedData = parseCSV(csvText);
+        
+        // 渲染卡片
+        renderCards(parsedData);
+        
+        // 隱藏 Loading、顯示留言牆
+        document.getElementById('loading').style.display = 'none';
+        const wall = document.getElementById('wall');
+        wall.style.display = 'block';
+
+        // 啟動 3 秒輪播焦點特效
+        if (messageCards.length > 0) {
+          wall.classList.add('has-highlight'); // 啟用未選中變暗樣式
+          startCarousel();
+        }
+
+      } catch (error) {
+        console.error('讀取 CSV 失敗:', error);
+        document.getElementById('loading').innerHTML = `
+          <div class="loading-text" style="color: #ff3366;">[ERROR] 資料讀取失敗，請稍後再試。</div>
+        `;
+      }
+    }
+
+    // ==========================================================================
+    // 2. CSV 安全解析函式 (精確處理內容中的引號、逗號與換行)
+    // ==========================================================================
+    function parseCSV(text) {
+      const rows = [];
+      let currentRow = [];
+      let currentCell = '';
+      let insideQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && nextChar === '"') {
+            currentCell += '"';
+            i++; // 跳過轉義的雙引號
+          } else {
+            insideQuotes = !insideQuotes; // 切換引號狀態
+          }
+        } else if (char === ',' && !insideQuotes) {
+          currentRow.push(currentCell.trim());
+          currentCell = '';
+        } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+          if (char === '\r' && nextChar === '\n') {
+            i++; // 處理 CRLF (\r\n)
+          }
+          currentRow.push(currentCell.trim());
+          if (currentRow.some(cell => cell.length > 0)) {
+            rows.push(currentRow);
+          }
+          currentRow = [];
+          currentCell = '';
+        } else {
+          currentCell += char;
+        }
+      }
+
+      if (currentCell.length > 0 || currentRow.length > 0) {
+        currentRow.push(currentCell.trim());
+        rows.push(currentRow);
+      }
+
+      // 跳過第 1 列 (標題列)，將後續資料轉成物件陣列
+      // 預設欄位順序：[0] 時間戳記, [1] 名字, [2] 悄悄話
+      const data = rows.slice(1).map(row => {
+        return {
+          timestamp: row[0] || '',
+          name: row[1] || '無名氏',
+          content: row[2] || ''
+        };
+      }).filter(item => item.content !== ''); // 過濾空留言
+
+      return data;
+    }
+
+    // ==========================================================================
+    // 3. 動態渲染 DOM 卡片
+    // ==========================================================================
+    function renderCards(data) {
+      const wall = document.getElementById('wall');
+      wall.innerHTML = '';
+      messageCards = [];
+
+      data.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'msg-card';
+        card.setAttribute('data-index', index);
+
+        // 格式化時間 (簡單擷取日期部分)
+        const formattedTime = item.timestamp.split(' ')[0] || item.timestamp;
+
+        card.innerHTML = `
+          <div class="msg-header">
+            <span class="msg-author">${escapeHTML(item.name)}</span>
+            <span class="msg-time">${escapeHTML(formattedTime)}</span>
+          </div>
+          <div class="msg-content">${escapeHTML(item.content)}</div>
+        `;
+
+        // 點擊卡片時可手動切換焦點
+        card.addEventListener('click', () => {
+          setHighlight(index);
+          resetTimer();
+        });
+
+        wall.appendChild(card);
+        messageCards.push(card);
+      });
+    }
+
+    // 防止 XSS 攻擊的字元轉義函式
+    function escapeHTML(str) {
+      return str.replace(/[&<>"']/g, match => {
+        const escapeMap = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        };
+        return escapeMap[match];
+      });
+    }
+
+    // ==========================================================================
+    // 4. 隨時間自動輪播高亮特效 (Spotlight Highlight Timer)
+    // ==========================================================================
+    function setHighlight(index) {
+      if (messageCards.length === 0) return;
+
+      // 移除上一次的高亮
+      messageCards.forEach(card => card.classList.remove('highlight'));
+
+      // 加上當前的高亮卡片
+      currentIndex = index % messageCards.length;
+      const targetCard = messageCards[currentIndex];
+      targetCard.classList.add('highlight');
+    }
+
+    function startCarousel() {
+      // 預設第 1 張卡片高亮
+      setHighlight(0);
+
+      // 每隔設定時間 (預設 3000ms) 切換下一張
+      carouselTimer = setInterval(() => {
+        currentIndex = (currentIndex + 1) % messageCards.length;
+        setHighlight(currentIndex);
+      }, CAROUSEL_INTERVAL);
+    }
+
+    function resetTimer() {
+      // 手動點擊卡片時，重置計時器避免快速切換
+      clearInterval(carouselTimer);
+      carouselTimer = setInterval(() => {
+        currentIndex = (currentIndex + 1) % messageCards.length;
+        setHighlight(currentIndex);
+      }, CAROUSEL_INTERVAL);
+    }
+  </script>
+</body>
+</html>
