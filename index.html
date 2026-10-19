@@ -117,4 +117,327 @@
     }
 
     .window-controls {
-      display
+      display: flex;
+      gap: 6px;
+    }
+
+    .win-btn {
+      width: 16px;
+      height: 16px;
+      background: var(--metal-grad);
+      border: 1px solid #000;
+      box-shadow: inset 1px 1px #fff, inset -1px -1px #555;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* ==========================================
+       個人檔案資料區 (Profile Section)
+       ========================================== */
+    .profile-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 0 15px;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin-bottom: 15px;
+    }
+
+    /* 閃光邊框與旋轉金屬圈 */
+    .avatar-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -8px; left: -8px; right: -8px; bottom: -8px;
+      border: 3px dashed var(--y2k-yellow);
+      border-radius: 50%;
+      animation: rotateRing 12s linear infinite;
+    }
+
+    @keyframes rotateRing {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 0 15px var(--y2k-cyan);
+      background: #000;
+    }
+
+    .user-name {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1.5rem;
+      color: #fff;
+      text-shadow: var(--text-glow);
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+
+    .user-status {
+      display: inline-block;
+      background: rgba(0, 240, 255, 0.15);
+      border: 1px solid var(--y2k-cyan);
+      color: var(--y2k-lime);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .user-status span {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ==========================================
+       16個關卡選單網格 (Grid Layout)
+       ========================================== */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* 電腦版 4x4 */
+      gap: 15px;
+      padding: 10px;
+    }
+
+    /* 通用按鈕基底 */
+    .quest-btn {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 85px;
+      padding: 10px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-family: 'Noto Sans TC', sans-serif;
+      font-weight: 700;
+      text-align: center;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      outline: none;
+    }
+
+    /* 數字編號標籤 */
+    .quest-num {
+      position: absolute;
+      top: 4px;
+      left: 8px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.65rem;
+      opacity: 0.8;
+    }
+
+    /* --- 已解鎖按鈕 (Unlocked Buttons) --- */
+    .quest-btn.unlocked {
+      background: var(--btn-grad);
+      border: 2px solid #fff;
+      color: #fff;
+      box-shadow: 
+        inset 0 2px 0 rgba(255,255,255,0.6),
+        3px 3px 0px #000,
+        0 0 10px rgba(255, 0, 127, 0.5);
+      cursor: pointer;
+    }
+
+    /* Week 2 樣式 */
+    .quest-btn.unlocked:nth-child(2) {
+      background: var(--btn-cyan-grad);
+      box-shadow: 
+        inset 0 2px 0 rgba(255,255,255,0.6),
+        3px 3px 0px #000,
+        0 0 10px rgba(0, 240, 255, 0.5);
+      color: #002b36;
+    }
+
+    /* Week 4 樣式 */
+    .quest-btn.unlocked:nth-child(4) {
+      background: var(--btn-lime-grad);
+      box-shadow: 
+        inset 0 2px 0 rgba(255,255,255,0.6),
+        3px 3px 0px #000,
+        0 0 10px rgba(57, 255, 20, 0.5);
+      color: #082900;
+    }
+
+    .quest-btn.unlocked .quest-title {
+      font-size: 1rem;
+      line-height: 1.3;
+      margin-top: 8px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    }
+
+    .quest-btn.unlocked:nth-child(2) .quest-title,
+    .quest-btn.unlocked:nth-child(4) .quest-title {
+      text-shadow: none;
+    }
+
+    /* ✨ 酷炫 Hover 動畫效果 ✨ */
+    .quest-btn.unlocked:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 
+        0 0 20px var(--y2k-yellow),
+        5px 5px 0px #000;
+      border-color: var(--y2k-yellow);
+      animation: glitch 0.3s infinite alternate;
+    }
+
+    .quest-btn.unlocked:active {
+      transform: translateY(2px) scale(0.98);
+      box-shadow: 1px 1px 0px #000;
+    }
+
+    /* Glitch 震動微效果 */
+    @keyframes glitch {
+      0% { transform: translateY(-4px) scale(1.05) skew(0deg); }
+      50% { transform: translateY(-4px) scale(1.05) skew(1deg); }
+      100% { transform: translateY(-4px) scale(1.05) skew(-1deg); }
+    }
+
+    /* --- 未解鎖按鈕 (Locked Buttons) --- */
+    .quest-btn.locked {
+      background: var(--locked-grad);
+      border: 2px solid #3a3a4c;
+      color: #71718a;
+      cursor: not-allowed;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+      pointer-events: none;
+    }
+
+    .quest-btn.locked .lock-icon {
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+      filter: grayscale(100%);
+      opacity: 0.6;
+    }
+
+    .quest-btn.locked .quest-title {
+      font-size: 0.85rem;
+      font-family: 'VT323', monospace;
+      letter-spacing: 1px;
+    }
+
+    /* ==========================================
+       響應式適配 (RWD 調整)
+       ========================================== */
+    @media (max-width: 768px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .user-name {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      .window-header {
+        font-size: 9px;
+      }
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .quest-btn {
+        min-height: 75px;
+        padding: 6px;
+      }
+      .quest-btn.unlocked .quest-title {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Y2K 主視窗 -->
+  <div class="y2k-window">
+    
+    <!-- Win98 復古標題列 -->
+    <div class="window-header">
+      <span>C:\QUEST_LOG\PORTFOLIO.EXE</span>
+      <div class="window-controls">
+        <div class="win-btn">_</div>
+        <div class="win-btn">□</div>
+        <div class="win-btn">X</div>
+      </div>
+    </div>
+
+    <!-- 1. 中央大頭貼與名字個人資料區 -->
+    <div class="profile-section">
+      <div class="avatar-wrapper">
+        <img class="avatar-img" src="https://i.postimg.cc/vBWbB1pj/zhao-yi.jpg" alt="User Avatar">
+      </div>
+      <h1 class="user-name">PLAYER_1</h1>
+      <div class="user-status">PROGRESS: <span>4 / 16</span> UNLOCKED</div>
+    </div>
+
+    <!-- 2. 下方 16 個關卡按鈕網格 -->
+    <div class="menu-grid">
+      
+      <!-- 按鈕 1 (已解鎖) -->
+      <a href="w1/index.html" class="quest-btn unlocked">
+        <span class="quest-num">01</span>
+        <span class="quest-title">Week 1<br>數位名片</span>
+      </a>
+
+      <!-- 按鈕 2 (已解鎖) -->
+      <a href="w2/index.html" class="quest-btn unlocked">
+        <span class="quest-num">02</span>
+        <span class="quest-title">Week 2<br>今天吃甚麼?</span>
+      </a>
+
+      <!-- 按鈕 3 (已解鎖) -->
+      <a href="w3/index.html" class="quest-btn unlocked">
+        <span class="quest-num">03</span>
+        <span class="quest-title">Week 3<br>迷因生產器</span>
+      </a>
+
+      <!-- 按鈕 4 (已解鎖 - 動態留言板) -->
+      <a href="w4/index.html" class="quest-btn unlocked">
+        <span class="quest-num">04</span>
+        <span class="quest-title">Week 4<br>動態留言板</span>
+      </a>
+
+      <!-- 按鈕 5 ~ 16 (未解鎖) -->
+      <div class="quest-btn locked"><span class="quest-num">05</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">06</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">07</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">08</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">09</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">10</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">11</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">12</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">13</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">14</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">15</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+      <div class="quest-btn locked"><span class="quest-num">16</span><span class="lock-icon">🔒</span><span class="quest-title">LOCKED</span></div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
